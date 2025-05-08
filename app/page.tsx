@@ -36,7 +36,7 @@ export default function WardView() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {Object.entries(patientData).map(([id, bed]) => (
           <Link href={`/patient/${id}`} key={id} className="block">
-            <Card className={`h-full hover:shadow-md transition-shadow ${bed.gender == "Male" ? "border-blue-400":"border-pink-400"} border-2`}>
+            <Card className={`h-full hover:shadow-md transition-shadow ${bed.gender == "Male" ? "border-blue-400": bed.gender == "Female" ? "border-pink-400" : "border-t-pink-400 border-b-blue-400 border-r-blue-400 border-l-pink-400"} border-[3px]`}>
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
                   <div>

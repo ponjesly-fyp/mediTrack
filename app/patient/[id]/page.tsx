@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import { useState } from "react"
 import { useEffect } from "react"
 import { patientData } from "@/components/patient-data"
-import {use} from "react"
+import { use } from "react"
 import Link from "next/link"
 import { Activity, ArrowLeft, ChevronDown, Download, Pause, Play } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
@@ -18,21 +19,44 @@ import { BedExitAlerts } from "@/components/bed-exit-alerts"
 import { AlertLog } from "@/components/alert-log"
 
 export default function PatientDashboard({ params }: { params: Promise<{ id: string }> }) {
-  const {id} = use(params)
+  const { id } = use(params)
   const patientInfo = patientData[String(id)]
   const { toast } = useToast()
   const [ivFlowPaused, setIvFlowPaused] = useState(false)
-  const [level,setLevel] = useState(0)
+  const [level, setLevel] = useState(0)
   useEffect(() => {
-    const fetchData = async ()=>{
-      const response = await fetch(`https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/.json`)
-      const data = await response.json()
-      setLevel(data.distance)
-    }
-    fetchData()
-    const interval = setInterval(fetchData,5000)
-    return () => clearInterval(interval);
-  },[])
+    let interval: NodeJS.Timeout;
+    const fetchData = async () => {
+      const response = await fetch(`https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/.json`);
+      const data = await response.json();
+      setLevel(data.distance);
+    };
+    const startPolling = () => {
+      fetchData(); // fetch immediately
+      interval = setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          fetchData();
+        }
+      }, 5000);
+    };
+    const stopPolling = () => {
+      clearInterval(interval);
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    startPolling();
+    return () => {
+      stopPolling();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
   const patient = {
     id: Number.parseInt(id),
     name: patientInfo.patientName,

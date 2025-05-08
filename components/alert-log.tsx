@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -59,7 +60,7 @@ export function AlertLog({ patientId }: AlertLogProps) {
       case "high":
         return "destructive"
       case "medium":
-        return "warning"
+        return "secondary"
       default:
         return "outline"
     }

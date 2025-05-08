@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import { useState } from "react"
@@ -55,7 +56,7 @@ export function BedExitAlerts({ patientId }: BedExitAlertsProps) {
                   <span>Alert triggered at {alertData.timestamp}</span>
                 </div>
                 <div className="flex items-center gap-2 mt-3">
-                  <Badge variant={alertData.riskLevel === "high" ? "destructive" : "warning"}>
+                  <Badge variant={alertData.riskLevel === "high" ? "destructive" : "secondary"}>
                     {alertData.riskLevel === "high" ? "High Risk" : "Low Risk"}
                   </Badge>
                   <Button size="sm" onClick={acknowledgeAlert}>

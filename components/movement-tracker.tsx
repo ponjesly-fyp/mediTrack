@@ -27,10 +27,10 @@ export function MovementTracker({ patientId }: MovementTrackerProps) {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-2 px-3 md:px-4">
         <CardTitle className="text-lg">Movement Tracking</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3 px-3 md:px-4">
         {/* Current Status */}
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">Current Status</div>
@@ -56,11 +56,11 @@ export function MovementTracker({ patientId }: MovementTrackerProps) {
         <div>
           <div className="text-sm text-muted-foreground mb-2">Movement Timeline</div>
           <div className="relative">
-            <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-muted"></div>
+            <div className="absolute left-[3px] top-0 bottom-0 w-0.5 bg-gray-300/90"></div>
             <div className="space-y-3 ml-6">
               {movementData.recentMovements.map((movement, index) => (
                 <div key={index} className="relative">
-                  <div className="absolute -left-6 mt-1 w-2 h-2 rounded-full bg-primary"></div>
+                  <div className="absolute -left-6 mt-1 w-2 h-2 rounded-full bg-black"></div>
                   <div className="flex justify-between">
                     <span className="font-medium text-sm">
                       {movement.type === "entry" ? "Returned to bed" : "Left bed"}

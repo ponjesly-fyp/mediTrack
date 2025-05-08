@@ -68,10 +68,10 @@ export function VitalsChart({ type, timeframe }: VitalsChartProps) {
         const minutesAgo = (points - i - 1) * 5
         const label =
           minutesAgo === 0
-            ? "0 min ago"
+            ? "0 min"
             : minutesAgo >= 60
               ? `${Math.floor(minutesAgo / 60)} hr ago`
-              : `${minutesAgo} min ago`
+              : `${minutesAgo} min`
 
         const variance = Math.random() * (maxValue - minValue) * 0.2
         const value = Math.max(minValue, Math.min(maxValue, baseValue + variance - 0.1))
@@ -151,7 +151,7 @@ export function VitalsChart({ type, timeframe }: VitalsChartProps) {
             {icon}
             <div>
               <h3 className="font-medium text-sm">{title}</h3>
-              <p className="text-xs text-muted-foreground">Normal range: {range}</p>
+              <p className="text-xs text-muted-foreground">Normal : {range}</p>
             </div>
           </div>
           <div className="text-right">
@@ -159,10 +159,9 @@ export function VitalsChart({ type, timeframe }: VitalsChartProps) {
             <span className="text-sm ml-1">{unit}</span>
           </div>
         </div>
-
         <div className="h-32 w-full mt-5 relative">
-          <ResponsiveContainer width="100%" height="100%" className="w-full absolute top-0 left-[-40px]">
-            <LineChart data={data} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
+          <ResponsiveContainer width="100%" height="100%" className="w-full absolute top-0">
+            <LineChart data={data} margin={{ top: 5, right: 5, left: -37, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} opacity={0} />
               <XAxis
                 dataKey="time"

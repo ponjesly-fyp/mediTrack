@@ -42,7 +42,7 @@ export function IVFluidIndicator({ fluidLevel, flowRate, isPaused }: IVFluidIndi
               </>
             )}
           </div>
-          <div className="absolute top-0 left-0 right-0 bg-gray-200 border-b border-gray-300"></div>
+          <div className="absolute top-0 h-[7px] left-0 right-0 bg-gray-200 border-b border-gray-300"></div>
         </div>
       </div>
 

@@ -4,6 +4,8 @@
 import { useState } from "react"
 import { useEffect } from "react"
 import { patientData } from "@/components/patient-data"
+import { Droplets } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import { use } from "react"
 import Link from "next/link"
 import { Activity, ArrowLeft, ChevronDown, Download, Pause, Play } from "lucide-react"
@@ -24,38 +26,66 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
   const { toast } = useToast()
   const [ivFlowPaused, setIvFlowPaused] = useState(false)
   const [level, setLevel] = useState(0)
+  // useEffect(() => {
+  //   let interval: NodeJS.Timeout;
+  //   const fetchData = async () => {
+  //     const response = await fetch(`https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/.json`);
+  //     const data = await response.json();
+  //     setLevel(data.distance);
+  //   };
+  //   const startPolling = () => {
+  //     fetchData(); // fetch immediately
+  //     interval = setInterval(() => {
+  //       if (document.visibilityState === 'visible') {
+  //         fetchData();
+  //       }
+  //     }, 5000);
+  //   };
+  //   const stopPolling = () => {
+  //     clearInterval(interval);
+  //   };
+  //   const handleVisibilityChange = () => {
+  //     if (document.visibilityState === 'visible') {
+  //       startPolling();
+  //     } else {
+  //       stopPolling();
+  //     }
+  //   };
+  //   document.addEventListener('visibilitychange', handleVisibilityChange);
+  //   startPolling();
+  //   return () => {
+  //     stopPolling();
+  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
+  //   };
+  // }, []);
+
+  const [buzzer, setBuzzer] = useState(false);
+
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    const fetchData = async () => {
-      const response = await fetch(`https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/.json`);
-      const data = await response.json();
-      setLevel(data.distance);
+    const fetchBuzzerState = async () => {
+      const res = await fetch("https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/buzzerState.json");
+      const data = await res.json();
+      setBuzzer(data);
     };
-    const startPolling = () => {
-      fetchData(); // fetch immediately
-      interval = setInterval(() => {
-        if (document.visibilityState === 'visible') {
-          fetchData();
-        }
-      }, 5000);
-    };
-    const stopPolling = () => {
-      clearInterval(interval);
-    };
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        startPolling();
-      } else {
-        stopPolling();
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    startPolling();
-    return () => {
-      stopPolling();
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
+    fetchBuzzerState();
   }, []);
+
+  const toggleBuzzer = async () => {
+    const newState = !buzzer;
+    await fetch("https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/buzzerState.json", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newState),
+    });
+    setBuzzer(newState);
+    setIvFlowPaused(!ivFlowPaused)
+    toast({
+      title: ivFlowPaused ? "IV Flow Resumed" : "IV Flow Paused",
+      description: `IV flow has been ${ivFlowPaused ? "resumed" : "paused"} for ${patient.name}`,
+    })
+  };
 
   const patient = {
     id: Number.parseInt(id),
@@ -68,14 +98,6 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
     ivFlowRate: 120,
   }
 
-  const toggleIVFlow = () => {
-    setIvFlowPaused(!ivFlowPaused)
-    toast({
-      title: ivFlowPaused ? "IV Flow Resumed" : "IV Flow Paused",
-      description: `IV flow has been ${ivFlowPaused ? "resumed" : "paused"} for ${patient.name}`,
-    })
-  }
-
   const downloadReport = () => {
     toast({
       title: "Report Downloaded",
@@ -83,8 +105,14 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
     })
   }
 
+  const [isRefilling, setIsRefilling] = useState(false)
+  const handleRefill = () => {
+    setIsRefilling(true)
+    setTimeout(() => setIsRefilling(false), 3000)
+  }
+
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
+    <div className="container mx-auto px-3 py-6 max-w-7xl font-recursive">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" asChild>
@@ -94,7 +122,7 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">{patient.name}</h1>
+            <h1 className="text-2xl font-bold font-recursive">{patient.name}</h1>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{patient.age} yrs</span>
               <span>•</span>
@@ -104,12 +132,12 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
             </div>
           </div>
         </div>
-        <div className="flex gap-2 w-full sm:w-auto">
+        {/* <div className="flex gap-2 w-full sm:w-auto">
           <Button variant="default" onClick={downloadReport} className="flex items-center gap-2">
             <Download className="h-4 w-4" />
             <span>Download Report</span>
           </Button>
-        </div>
+        </div> */}
       </div>
 
       {/* Row 1: IV Fluid Status (1/3) and Vitals (2/3) */}
@@ -131,21 +159,36 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
                   flowRate={patient.ivFlowRate}
                   isPaused={ivFlowPaused}
                 />
-                <Button
-                  onClick={toggleIVFlow}
-                  variant={ivFlowPaused ? "destructive" : "default"}
-                  className="mt-4 w-full"
-                >
-                  {ivFlowPaused ? (
-                    <>
-                      <Play className="h-4 w-4 mr-2" /> Resume IV Flow
-                    </>
-                  ) : (
-                    <>
-                      <Pause className="h-4 w-4 mr-2" /> Pause IV Flow
-                    </>
-                  )}
-                </Button>
+                <div className="flex flex-row items-center justify-between w-full gap-2">
+                  <Button
+                    onClick={toggleBuzzer}
+                    className={`mt-6 py-6 rounded-full ${ivFlowPaused ? "bg-green-500/90" : "bg-red-500/90"} text-white font-semibold transition-all duration-500 hover:bg-opacity-90`}
+                  >
+                    {ivFlowPaused ? (
+                      <>
+                        <Play className="h-4 w-4" />
+                      </>
+                    ) : (
+                      <>
+                        <Pause className="h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    onClick={handleRefill}
+                    className={`mt-6 w-full py-6 rounded-xl ${isRefilling ? "bg-green-500/90" : "bg-red-500/90"
+                      } text-white font-semibold transition-all duration-500 hover:bg-opacity-90 ${isRefilling ? "cursor-not-allowed" : ""}`}
+                  >
+                    {isRefilling ? (
+                      <>
+                        <LoaderCircle className="h-5 w-5 animate-spin" />
+                        Refilling
+                      </>
+                    ) : (
+                      <><Droplets className="h-5 w-5"/> Refill</>
+                    )}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -157,13 +200,13 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
         {/* Right Column - Real-Time Vitals */}
         <div className="lg:col-span-2">
           <Card>
-            <CardHeader className="pb-2">
+            <CardHeader className="pb-4 px-3 md:px-4">
               <CardTitle className="text-lg flex items-center gap-2">
                 <Activity className="h-5 w-5" />
                 <span>Real-Time Vitals</span>
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 md:px-4">
               <Tabs defaultValue="1h">
                 <div className="flex justify-between items-center mb-4">
                   <TabsList>

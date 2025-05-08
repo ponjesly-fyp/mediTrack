@@ -1,5 +1,5 @@
 "use client"
-
+import { Cross } from 'lucide-react';
 import Link from "next/link"
 import { Bell, Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
@@ -10,10 +10,11 @@ export function DashboardHeader() {
   const { setTheme } = useTheme()
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-30 border-b bg-background h-16 flex items-center px-4 md:px-6">
+    <header className="fixed top-0 left-0 right-0 z-30 bg-background/30 dark:bg-black/30 backdrop-blur-lg shadow-sm h-16 flex items-center px-4 md:px-6 [mask-image:linear-gradient(to_bottom,white_80%,transparent)]">
       <div className="flex items-center w-full justify-between">
-        <Link href="/" className="flex items-center">
-          <span className="font-bold text-xl">MediTrack</span>
+        <Link href="/" className="flex flex-row items-center gap-1">
+          <Cross className='text-red-500 w-5 h-5' strokeWidth={2.5}/>
+          <span className="text-xl font-logo tracking-normal">MediTrack</span>
         </Link>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" className="relative">
@@ -37,5 +38,6 @@ export function DashboardHeader() {
         </div>
       </div>
     </header>
+
   )
 }

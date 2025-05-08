@@ -20,6 +20,10 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        recursive: ["Recursive", "serif"],
+        logo:["Madimi One"]
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

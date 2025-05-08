@@ -68,41 +68,48 @@ export function AlertLog({ patientId }: AlertLogProps) {
 
   return (
     <Card>
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-3 px-3 md:px-4">
         <CardTitle className="text-lg flex items-center gap-2">
           <Bell className="h-4 w-4" />
           <span>Alert Log</span>
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
-          {alerts.map((alert) => (
-            <div key={alert.id} className="flex items-start gap-3 p-3 border rounded-md">
-              <div
-                className={`
-                rounded-full p-1.5
-                ${
-                  alert.severity === "high"
-                    ? "bg-red-100 text-red-500 dark:bg-red-950/50"
-                    : alert.severity === "medium"
-                      ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-950/50"
-                      : "bg-blue-100 text-blue-500 dark:bg-blue-950/50"
-                }
-              `}
-              >
-                <alert.icon className="h-4 w-4" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-start gap-2">
-                  <div className="font-medium text-sm">{alert.message}</div>
-                  <Badge variant={getSeverityVariant(alert.severity)} className="shrink-0">
-                    {alert.severity}
-                  </Badge>
+      <CardContent className="px-3 md:px-4">
+        <div className="relative">
+          {/* Top mask */}
+          <div className="pointer-events-none absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-white dark:from-[#0c0c0c] to-transparent z-10" />
+
+          {/* Bottom mask */}
+          <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-white dark:from-[#0c0c0c] to-transparent z-10" />
+
+          <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+            {alerts.map((alert) => (
+              <div key={alert.id} className="flex items-start gap-3 p-3 border rounded-md">
+                <div
+                  className={`
+              rounded-full p-1.5
+              ${alert.severity === "high"
+                      ? "bg-red-100 text-red-500 dark:bg-red-950/50"
+                      : alert.severity === "medium"
+                        ? "bg-yellow-100 text-yellow-600 dark:bg-yellow-950/50"
+                        : "bg-blue-100 text-blue-500 dark:bg-blue-950/50"
+                    }
+            `}
+                >
+                  <alert.icon className="h-4 w-4" />
                 </div>
-                <div className="text-xs text-muted-foreground mt-1">{alert.timestamp}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-start gap-2">
+                    <div className="font-medium text-sm">{alert.message}</div>
+                    <Badge variant={getSeverityVariant(alert.severity)} className="shrink-0">
+                      {alert.severity}
+                    </Badge>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">{alert.timestamp}</div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { AlertTriangle, CheckCircle, Clock } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { Siren } from 'lucide-react';
 
 interface BedExitAlertsProps {
   patientId: number
@@ -40,7 +41,10 @@ export function BedExitAlerts({ patientId }: BedExitAlertsProps) {
     <Card>
       <CardHeader className="pb-2 px-3 md:px-4">
         <CardTitle className="text-lg flex items-center justify-between">
-          <span>Bed Exit Alerts</span>
+          <div className="flex items-center justify-center gap-2">
+            <Siren className="h-5 w-5 text-red-500 mb-[6px]" strokeWidth={2} />
+            <span>Bed Exit Alerts</span>
+          </div>
           <Badge variant={activeAlert ? "destructive" : "outline"}>{activeAlert ? "Active Alert" : "No Alerts"}</Badge>
         </CardTitle>
       </CardHeader>

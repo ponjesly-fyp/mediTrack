@@ -70,7 +70,7 @@ export function AlertLog({ patientId }: AlertLogProps) {
     <Card>
       <CardHeader className="pb-3 px-3 md:px-4">
         <CardTitle className="text-lg flex items-center gap-2">
-          <Bell className="h-4 w-4" />
+          <Bell className="h-5 w-5 text-orange-500" strokeWidth={2}/>
           <span>Alert Log</span>
         </CardTitle>
       </CardHeader>

@@ -16,7 +16,7 @@ export function IVFluidIndicator({ fluidLevel, flowRate, isPaused }: IVFluidIndi
   return (
     <div className="flex items-end gap-4 w-full">
       <div className="flex flex-col items-center">
-        <div className="text-sm font-medium mb-2">{fluidLevel}%</div>
+        <div className="text-sm font-medium mb-2">{Math.round(fluidLevel)}%</div>
         <div className="relative w-16 h-64 border-2 border-gray-300 rounded-lg overflow-hidden">
           {/* Measurement lines */}
           <div className="absolute inset-0 flex flex-col justify-between py-2 px-1">
@@ -31,7 +31,7 @@ export function IVFluidIndicator({ fluidLevel, flowRate, isPaused }: IVFluidIndi
           {/* Fluid visualization */}
           <div
             className={cn("absolute bottom-0 left-0 right-0 transition-all duration-1000", getFluidColor())}
-            style={{ height: `${fluidLevel}%` }}
+            style={{ height: `${Math.round(fluidLevel)}%` }}
           >
             {/* Animated bubbles effect when not paused */}
             {!isPaused && (

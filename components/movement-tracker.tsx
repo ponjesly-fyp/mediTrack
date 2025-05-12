@@ -4,6 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Bed, FootprintsIcon as Walking } from "lucide-react"
+import { Footprints } from 'lucide-react';
 
 interface MovementTrackerProps {
   patientId: number
@@ -28,7 +29,10 @@ export function MovementTracker({ patientId }: MovementTrackerProps) {
   return (
     <Card>
       <CardHeader className="pb-2 px-3 md:px-4">
-        <CardTitle className="text-lg">Movement Tracking</CardTitle>
+        <CardTitle className="text-lg flex items-center gap-2">
+          <Footprints className="h-5 w-5 text-emerald-500 mb-[1.5px]"/>
+          <span>Movement Tracking</span>
+        </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 px-3 md:px-4">
         {/* Current Status */}
@@ -56,11 +60,11 @@ export function MovementTracker({ patientId }: MovementTrackerProps) {
         <div>
           <div className="text-sm text-muted-foreground mb-2">Movement Timeline</div>
           <div className="relative">
-            <div className="absolute left-[3px] top-0 bottom-0 w-0.5 bg-gray-300/90"></div>
+            <div className="absolute left-[3px] top-0 bottom-0 w-0.5 bg-emerald-300"></div>
             <div className="space-y-3 ml-6">
               {movementData.recentMovements.map((movement, index) => (
                 <div key={index} className="relative">
-                  <div className="absolute -left-6 mt-1 w-2 h-2 rounded-full bg-black"></div>
+                  <div className="absolute -left-6 mt-1 w-2 h-2 rounded-full bg-emerald-500"></div>
                   <div className="flex justify-between">
                     <span className="font-medium text-sm">
                       {movement.type === "entry" ? "Returned to bed" : "Left bed"}

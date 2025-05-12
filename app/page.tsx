@@ -20,7 +20,7 @@ export default function WardView() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-7xl">
+    <div className="container mx-auto px-4 py-6 max-w-7xl font-recursive">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h1 className="text-2xl font-bold">Ward View</h1>
         <div className="relative w-full sm:w-auto">
@@ -36,7 +36,7 @@ export default function WardView() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {Object.entries(patientData).map(([id, bed]) => (
           <Link href={`/patient/${id}`} key={id} className="block">
-            <Card className={`h-full hover:shadow-md transition-shadow ${bed.gender == "Male" ? "border-blue-400": bed.gender == "Female" ? "border-pink-400" : "border-t-pink-400 border-b-blue-400 border-r-blue-400 border-l-pink-400"} border-[1px]`}>
+            <Card className={`h-full hover:shadow-md transition-shadow border-[1px]`}>
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
                   <div>

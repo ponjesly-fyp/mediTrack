@@ -10,10 +10,10 @@ export function PatientDetailsCard({ id }: userId) {
       <CardHeader className="pb-2 px-3 md:px-4">
         <CardTitle className="text-lg flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <User className="h-5 w-5 text-blue-500 mb-[5px]" strokeWidth={2} />
+            <User className="h-5 w-5 text-blue-500 mb-[3px]" strokeWidth={2} />
             <span>Patient Details</span>
           </div>
-          <span className="inline-flex items-center rounded-full bg-green-100/80 px-2 py-1 text-xs font-medium text-green-600 dark:bg-red-900/20 dark:text-red-300">
+          <span className="inline-flex items-center rounded-full bg-green-100/80 px-2 py-1 text-xs font-medium text-green-600">
             updated
           </span>
         </CardTitle>

@@ -3,6 +3,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Search } from "lucide-react"
 import { patientData } from "@/components/patient-data"
+import { Mars } from 'lucide-react';
+import { Venus } from 'lucide-react';
 export default function WardView() {
 
   // Function to get status color
@@ -11,7 +13,7 @@ export default function WardView() {
       case "stable":
         return "bg-green-500"
       case "attention":
-        return "bg-yellow-500"
+        return "bg-yellow-400"
       case "critical":
         return "bg-red-500"
       default:
@@ -40,7 +42,11 @@ export default function WardView() {
               <CardContent className="p-4">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold text-lg">{bed.patientName}</h3>
+                    <div className="flex flex-row gap-1">
+                      {bed.gender == "Male" ? <Mars className="w-4 h-4 mt-[5px] text-blue-500" /> :
+                        <Venus className="w-4 h-4 mt-[5px] text-pink-500" />}
+                      <h3 className="font-semibold text-lg">{bed.patientName}</h3>
+                    </div>
                     <p className="text-sm text-muted-foreground">{bed.department}</p>
                     <p className="text-sm font-medium mt-2">Bed: {bed.bedId}</p>
                   </div>

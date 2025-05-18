@@ -1,6 +1,20 @@
+"use client"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { UserPlus } from 'lucide-react';
 import { UserMinus } from 'lucide-react';
+import { useRouter } from "next/navigation";
+import {
+    AlertDialog,
+    AlertDialogTrigger,
+    AlertDialogContent,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogCancel,
+    AlertDialogAction
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 interface RoomCardProps {
     room: {
         id: number
@@ -9,8 +23,9 @@ interface RoomCardProps {
         available: boolean
     }
 }
-
 export default function RoomCard({ room }: RoomCardProps) {
+    const router = useRouter()
+    const [inputValue, setInputValue] = useState("");
     const getText = (available: boolean) => {
         if (available) {
             return "Add Patient"
@@ -19,16 +34,8 @@ export default function RoomCard({ room }: RoomCardProps) {
             return "Remove Patient"
         }
     }
-    const getBorder = (available: boolean) => {
-        if (available) {
-            return "border-green-500"
-        }
-        else {
-            return "border-red-500"
-        }
-    }
     return (
-        <Card className={`overflow-hidden border ${getBorder(room.available)} transition-all hover:shadow-md`}>
+        <Card className={`overflow-hidden border transition-all hover:shadow-md`}>
             <CardContent className="p-0">
                 <div className="border-b border-gray-100 p-4">
                     <div className="flex items-center justify-between">
@@ -43,17 +50,54 @@ export default function RoomCard({ room }: RoomCardProps) {
                 </div>
             </CardContent>
             <div>
-                {room.available ? <CardFooter className="items-center justify-center p-3 bg-green-500/90 text-white transition-all duration-300 hover:opacity-80">
-                    <button className="font-medium text-sm flex flex-row gap-1">
-                        <UserPlus className="text-white w-4 h-4 mt-[0.75px]"/>
+                {room.available ? <CardFooter className="items-center justify-center p-3 bg-black/90 text-white transition-all duration-300 hover:opacity-90" onClick={() => {
+                    router.push(`/admin/new-patient/${room.roomNumber}`)
+                }}>
+                    <button className="font-semibold text-sm flex flex-row gap-1">
+                        <UserPlus className="w-4 h-4 mt-[0.75px]" />
                         {getText(room.available)}
                     </button>
-                </CardFooter> : <CardFooter className="items-center justify-center p-3 bg-red-500/90 text-white transition-all duration-300 hover:opacity-80">
-                    <button className="font-medium text-sm flex flex-row gap-1">
-                        <UserMinus className="text-white w-4 h-4 mt-[0.75px]"/>
-                        {getText(room.available)}
-                    </button>
-                </CardFooter>}
+                </CardFooter> : <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <CardFooter className="items-center justify-center p-3 bg-black/90 text-white transition-all duration-300 cursor-pointer hover:opacity-90">
+                            <button className="font-semibold text-sm flex flex-row gap-1">
+                                <UserMinus className="w-4 h-4 mt-[0.75px]" />
+                                {getText(room.available)}
+                            </button>
+                        </CardFooter>
+                    </AlertDialogTrigger>
+
+                    <AlertDialogContent className="font-recursive rounded-xl">
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Room | {room.roomNumber}</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will remove the patient from the room.
+                                Type &quot;{room.roomNumber}&quot; to proceed:
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+
+                        <input
+                            type="text"
+                            className="w-full mt-1 border-2 border-gray-600/50 focus:border-gray-600 focus:ring-0 focus:outline-none px-3 py-2 rounded text-black transition-colors duration-300"
+                            placeholder="Enter room number"
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                        />
+
+                        <AlertDialogFooter className="mt-4">
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                                onClick={() => {
+                                    console.log("Confirmed");
+                                }}
+                                disabled={inputValue !== room.roomNumber}
+                                className="bg-red-500 hover:bg-red-500 hover:opacity-90 transition-opacity duration-300"
+                            >
+                                Delete
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>}
             </div>
         </Card>
     )

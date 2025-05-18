@@ -9,7 +9,7 @@ interface RoomFromDB {
 }
 export default async function RoomsPage() {
   const db = await database()
-  const rooms = (await db.collection("rooms").find({}).toArray()) as unknown as WithId<RoomFromDB>[]
+  const rooms = (await db.collection("rooms").find({}).sort({ roomNumber: 1 }).toArray()) as unknown as WithId<RoomFromDB>[]
   return (
     <div className="min-h-screen bg-background">
       <div className="px-5 md:px-6 container py-2">
@@ -21,7 +21,6 @@ export default async function RoomsPage() {
             </p>
           </div>
         </div>
-
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {rooms.map((room) => (
             <RoomCard

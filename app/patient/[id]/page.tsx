@@ -29,38 +29,38 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
   const { toast } = useToast()
   const [ivFlowPaused, setIvFlowPaused] = useState(false)
   const [level, setLevel] = useState(0)
-  // useEffect(() => {
-  //   let interval: NodeJS.Timeout;
-  //   const fetchData = async () => {
-  //     const response = await fetch(`https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/.json`);
-  //     const data = await response.json();
-  //     setLevel(data.distance);
-  //   };
-  //   const startPolling = () => {
-  //     fetchData(); // fetch immediately
-  //     interval = setInterval(() => {
-  //       if (document.visibilityState === 'visible') {
-  //         fetchData();
-  //       }
-  //     }, 5000);
-  //   };
-  //   const stopPolling = () => {
-  //     clearInterval(interval);
-  //   };
-  //   const handleVisibilityChange = () => {
-  //     if (document.visibilityState === 'visible') {
-  //       startPolling();
-  //     } else {
-  //       stopPolling();
-  //     }
-  //   };
-  //   document.addEventListener('visibilitychange', handleVisibilityChange);
-  //   startPolling();
-  //   return () => {
-  //     stopPolling();
-  //     document.removeEventListener('visibilitychange', handleVisibilityChange);
-  //   };
-  // }, []);
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    const fetchData = async () => {
+      const response = await fetch(`https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/.json`);
+      const data = await response.json();
+      setLevel(data.distance);
+    };
+    const startPolling = () => {
+      fetchData(); // fetch immediately
+      interval = setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          fetchData();
+        }
+      }, 5000);
+    };
+    const stopPolling = () => {
+      clearInterval(interval);
+    };
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    startPolling();
+    return () => {
+      stopPolling();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   const [buzzer, setBuzzer] = useState(false);
 

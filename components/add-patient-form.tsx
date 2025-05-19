@@ -33,7 +33,7 @@ export default function PatientFormBoard({ onSubmit, isSubmitting }: PatientForm
                                 <Input
                                     id="fullName"
                                     name="fullName"
-                                    placeholder="John Doe"
+                                    placeholder="Seeman"
                                     required
                                     className="focus-visible:ring-gray-600/50"
                                 />
@@ -46,7 +46,7 @@ export default function PatientFormBoard({ onSubmit, isSubmitting }: PatientForm
                                     id="age"
                                     name="age"
                                     type="number"
-                                    placeholder="35"
+                                    placeholder="58"
                                     required
                                     className="focus-visible:ring-gray-600/50"
                                 />
@@ -56,13 +56,13 @@ export default function PatientFormBoard({ onSubmit, isSubmitting }: PatientForm
                                     <div className="text-md">Gender</div>
                                 </Label>
                                 <ToggleGroup type="single" size="sm">
-                                    <ToggleGroupItem value="male" aria-label="Toggle bold" className="border-1 p-4">
+                                    <ToggleGroupItem value="male" aria-label="Toggle bold" className="border-1 p-4 py-5">
                                         <Mars className="text-blue-500"/>
                                     </ToggleGroupItem>
-                                    <ToggleGroupItem value="female" aria-label="Toggle italic" className="border-1 p-4">
+                                    <ToggleGroupItem value="female" aria-label="Toggle italic" className="border-1 p-4 py-5">
                                         <Venus className="text-pink-500"/>
                                     </ToggleGroupItem>
-                                    <ToggleGroupItem value="other" aria-label="Toggle strikethrough" className="border-1 p-4">
+                                    <ToggleGroupItem value="other" aria-label="Toggle strikethrough" className="border-1 p-4 py-5">
                                         <Transgender className="text-green-500"/>
                                     </ToggleGroupItem>
                                 </ToggleGroup>
@@ -149,15 +149,15 @@ export default function PatientFormBoard({ onSubmit, isSubmitting }: PatientForm
                             </div>
                         </div>
                     </Card>
-                    <div className="flex justify-end space-x-4">
+                    <div className="flex justify-center md:justify-end items-center md:items-end w-full space-x-4">
                         <Button
                             variant="outline"
                             type="reset"
-                            className="text-muted-foreground hover:bg-transparent hover:text-foreground"
+                            className="text-muted-foreground hover:bg-transparent hover:text-foreground w-full md:w-auto"
                         >
                             Reset Form
                         </Button>
-                        <Button type="submit" className="bg-black text-white hover:opacity-90 hover:bg-black" disabled={isSubmitting}>
+                        <Button type="submit" className="bg-black text-white hover:opacity-90 hover:bg-black w-full md:w-auto" disabled={isSubmitting}>
                             {isSubmitting ? "Processing..." : "Admit Patient"}
                         </Button>
                     </div>

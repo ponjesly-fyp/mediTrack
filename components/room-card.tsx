@@ -66,16 +66,14 @@ export default function RoomCard({ room }: RoomCardProps) {
                             </button>
                         </CardFooter>
                     </AlertDialogTrigger>
-
-                    <AlertDialogContent className="font-recursive rounded-xl">
+                    <AlertDialogContent className="font-recursive rounded-xl w-[calc(100vw-20px)] md:max-w-md">
                         <AlertDialogHeader>
-                            <AlertDialogTitle>Room | {room.roomNumber}</AlertDialogTitle>
-                            <AlertDialogDescription>
+                            <AlertDialogTitle className="text-left">Room | {room.roomNumber}</AlertDialogTitle>
+                            <AlertDialogDescription className="text-left">
                                 This action cannot be undone. This will remove the patient from the room.
                                 Type &quot;{room.roomNumber}&quot; to proceed:
                             </AlertDialogDescription>
                         </AlertDialogHeader>
-
                         <input
                             type="text"
                             className="w-full mt-1 border-2 border-gray-600/50 focus:border-gray-600 focus:ring-0 focus:outline-none px-3 py-2 rounded text-black transition-colors duration-300"
@@ -83,17 +81,16 @@ export default function RoomCard({ room }: RoomCardProps) {
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
                         />
-
-                        <AlertDialogFooter className="mt-4">
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogFooter className="mt-1 md:mt-2 flex flex-row gap-2">
+                            <AlertDialogCancel className="w-full">Cancel</AlertDialogCancel>
                             <AlertDialogAction
                                 onClick={() => {
                                     console.log("Confirmed");
                                 }}
                                 disabled={inputValue !== room.roomNumber}
-                                className="bg-red-500 hover:bg-red-500 hover:opacity-90 transition-opacity duration-300"
+                                className="bg-red-500 hover:bg-red-500 hover:opacity-90 transition-opacity duration-300 w-full mt-2 md:mt-0"
                             >
-                                Delete
+                                Remove
                             </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>

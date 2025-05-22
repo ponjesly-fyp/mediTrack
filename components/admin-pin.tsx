@@ -44,11 +44,11 @@ export default function PinVerification() {
                             pattern="^[0-9]+$"
                             render={() => (
                                 <InputOTP maxLength={4} value={otp} onChange={setOtp}>
-                                    <InputOTPGroup className="[text-security:disc] [-webkit-text-security:disc]">
-                                        <InputOTPSlot index={0} className="w-[50px] h-[50px] border-black text-semibold text-lg"/>
-                                        <InputOTPSlot index={1} className="w-[50px] h-[50px] border-black text-semibold text-lg"/>
-                                        <InputOTPSlot index={2} className="w-[50px] h-[50px] border-black text-semibold text-lg"/>
-                                        <InputOTPSlot index={3} className="w-[50px] h-[50px] border-black text-semibold text-lg"/>
+                                    <InputOTPGroup className="[text-security:disc] [-webkit-text-security:disc] gap-2">
+                                        <InputOTPSlot index={0} className="w-[50px] h-[50px] border-black border-2 rounded-l-lg border-l-2 rounded-lg text-semibold text-lg cursor-auto caret-black"/>
+                                        <InputOTPSlot index={1} className="w-[50px] h-[50px] border-black text-semibold rounded-lg border-2 text-lg"/>
+                                        <InputOTPSlot index={2} className="w-[50px] h-[50px] border-black text-semibold rounded-lg border-2 text-lg"/>
+                                        <InputOTPSlot index={3} className="w-[50px] h-[50px] border-black text-semibold rounded-lg border-2 text-lg"/>
                                     </InputOTPGroup>
                                 </InputOTP>
                             )}

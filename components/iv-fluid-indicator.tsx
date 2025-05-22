@@ -7,16 +7,19 @@ interface IVFluidIndicatorProps {
 }
 
 export function IVFluidIndicator({ fluidLevel, flowRate, isPaused }: IVFluidIndicatorProps) {
-  const getFluidColor = () => {
-    if (fluidLevel <= 20) return "bg-red-500"
-    if (fluidLevel <= 40) return "bg-yellow-500"
-    return "bg-green-500"
+  let fluidLevel1 = fluidLevel
+  if(fluidLevel>=100){
+    fluidLevel1 = 100
   }
-
+  const getFluidColor = () => {
+    if (fluidLevel1 <= 30) return "bg-gradient-to-l from-red-400 to-red-500"
+    if (fluidLevel1 <= 60) return "bg-gradient-to-l from-yellow-300 to-yellow-400"
+    return "bg-gradient-to-l from-green-400 to-green-500"
+  }
   return (
     <div className="flex items-end gap-4 w-full">
       <div className="flex flex-col items-center">
-        <div className="text-sm font-medium mb-2">{Math.round(fluidLevel)}%</div>
+        <div className="text-sm font-medium mb-2">{Math.round(fluidLevel1)}%</div>
         <div className="relative w-16 h-64 border-2 border-gray-300 rounded-lg overflow-hidden">
           {/* Measurement lines */}
           <div className="absolute inset-0 flex flex-col justify-between py-2 px-1">
@@ -27,11 +30,10 @@ export function IVFluidIndicator({ fluidLevel, flowRate, isPaused }: IVFluidIndi
               </div>
             ))}
           </div>
-
           {/* Fluid visualization */}
           <div
             className={cn("absolute bottom-0 left-0 right-0 transition-all duration-1000", getFluidColor())}
-            style={{ height: `${Math.round(fluidLevel)}%` }}
+            style={{ height: `${Math.round(fluidLevel1)}%` }}
           >
             {/* Animated bubbles effect when not paused */}
             {!isPaused && (
@@ -55,7 +57,7 @@ export function IVFluidIndicator({ fluidLevel, flowRate, isPaused }: IVFluidIndi
 
           <div>
             <div className="text-sm text-muted-foreground">Estimated Time Remaining</div>
-            <div className="text-xl font-semibold">{isPaused ? "Paused" : `${Math.floor(fluidLevel / 10)} hrs`}</div>
+            <div className="text-xl font-semibold">{isPaused ? "Paused" : `${Math.floor(fluidLevel1 / 10)} hrs`}</div>
           </div>
 
           <div>

@@ -22,6 +22,8 @@ import { MovementTracker } from "@/components/movement-tracker"
 import { BedExitAlerts } from "@/components/bed-exit-alerts"
 import { AlertLog } from "@/components/alert-log"
 import { PatientDetailsCard } from "@/components/patient-details-card";
+import HeartbeatMonitor from "@/components/heartbeat-monitor";
+import TemperatureMonitor from "@/components/temperature-monitor";
 
 export default function PatientDashboard({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -29,12 +31,16 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
   const { toast } = useToast()
   const [ivFlowPaused, setIvFlowPaused] = useState(false)
   const [level, setLevel] = useState(0)
+  const [bpm,setBpm] = useState(72)
+  const [temp,setTemp] = useState(96)
   useEffect(() => {
     let interval: NodeJS.Timeout;
     const fetchData = async () => {
       const response = await fetch(`https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/.json`);
       const data = await response.json();
       setLevel(data.distance);
+      setBpm(data.bpm)
+      setTemp(data.temperature)
     };
     const startPolling = () => {
       fetchData(); // fetch immediately
@@ -147,7 +153,7 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
             <CardHeader className="pb-2 px-3 md:px-4">
               <CardTitle className="text-lg flex justify-between items-center">
                 <div className="flex items-center gap-1">
-                  <Battery className="h-5 w-5 text-blue-500 mb-[4px] -rotate-90" strokeWidth={2}/>
+                  <Battery className="h-5 w-5 text-blue-500 mb-[4px] -rotate-90" strokeWidth={2} />
                   <span>IV Fluid Status</span>
                 </div>
                 <Badge variant={ivFlowPaused ? "destructive" : "outline"}>{ivFlowPaused ? "Paused" : "Active"}</Badge>
@@ -163,7 +169,7 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
                 <div className="flex flex-row items-center justify-between w-full gap-2">
                   <Button
                     onClick={toggleBuzzer}
-                    className={`mt-6 py-6 rounded-full ${ivFlowPaused ? "bg-red-500 animate-pulse" : "bg-red-500/90"} text-white font-semibold transition-all duration-500 hover:bg-opacity-90`}
+                    className={`mt-6 py-6 rounded-full ${ivFlowPaused ? "bg-red-500 animate-pulse" : "bg-gradient-to-r from-red-400 to-red-500"} text-white font-semibold transition-all duration-500 hover:bg-opacity-90`}
                   >
                     {ivFlowPaused ? (
                       <>
@@ -177,7 +183,7 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
                   </Button>
                   <Button
                     onClick={handleRefill}
-                    className={`mt-6 w-full py-6 rounded-xl bg-red-500/90
+                    className={`mt-6 w-full py-6 rounded-xl bg-gradient-to-r from-red-400 to-red-500
                       } text-white font-semibold transition-all duration-500 hover:bg-opacity-90 ${isRefilling ? "cursor-not-allowed" : ""}`}
                   >
                     {isRefilling ? (
@@ -186,16 +192,14 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
                         Refilling
                       </>
                     ) : (
-                      <><Droplets className="h-5 w-5"/> Refill</>
+                      <><Droplets className="h-5 w-5" /> Refill</>
                     )}
                   </Button>
                 </div>
               </div>
             </CardContent>
           </Card>
-
           {/* Bed Exit Alerts - Added below IV Fluid Status */}
-          <BedExitAlerts patientId={patient.id} />
         </div>
 
         {/* Right Column - Real-Time Vitals */}
@@ -207,37 +211,14 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
                 <span>Real-Time Vitals</span>
               </CardTitle>
             </CardHeader>
-            <CardContent className="px-3 md:px-4">
-              <Tabs defaultValue="1h">
-                <div className="flex justify-between items-center mb-4">
-                  <TabsList>
-                    <TabsTrigger value="1h">1h</TabsTrigger>
-                    <TabsTrigger value="24h">24h</TabsTrigger>
-                    <TabsTrigger value="7d">7d</TabsTrigger>
-                  </TabsList>
-                  <Button variant="secondary" size="sm" className="text-xs flex items-center">
-                    More Details <ChevronDown className="ml-1 h-3 w-3" />
-                  </Button>
-                </div>
-                <TabsContent value="1h" className="space-y-6">
-                  <VitalsChart type="heartRate" timeframe="1h" />
-                  <VitalsChart type="spo2" timeframe="1h" />
-                  <VitalsChart type="temperature" timeframe="1h" />
-                  <VitalsChart type="glucose" timeframe="1h" />
-                </TabsContent>
-                <TabsContent value="24h" className="space-y-6">
-                  <VitalsChart type="heartRate" timeframe="24h" />
-                  <VitalsChart type="spo2" timeframe="24h" />
-                  <VitalsChart type="temperature" timeframe="24h" />
-                  <VitalsChart type="glucose" timeframe="24h" />
-                </TabsContent>
-                <TabsContent value="7d" className="space-y-6">
-                  <VitalsChart type="heartRate" timeframe="7d" />
-                  <VitalsChart type="spo2" timeframe="7d" />
-                  <VitalsChart type="temperature" timeframe="7d" />
-                  <VitalsChart type="glucose" timeframe="7d" />
-                </TabsContent>
-              </Tabs>
+            <CardContent className="px-3 md:px-4 w-[100%] flex flex-col gap-3">
+              <Card className="w-full mx-auto overflow-hidden">
+                <CardContent className="p-4">
+                  <HeartbeatMonitor heartRate={bpm} />
+                </CardContent>
+              </Card>
+              <TemperatureMonitor temperature={temp}/>
+              <VitalsChart type="glucose" timeframe="1h" />
             </CardContent>
           </Card>
         </div>

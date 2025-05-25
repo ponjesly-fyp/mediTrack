@@ -112,12 +112,15 @@ export default function HeartbeatMonitor({ heartRate }: HeartbeatMonitorProps) {
                     </div>
                 </div>
                 <div className="flex items-center gap-1">
-                    <Heart
+                    {heartRate > 50 ? <><Heart
                         className={`h-5 w-5 text-red-500 transition-transform ${isBeating ? "scale-125" : "scale-100"} mr-1`}
                         fill="#ef4444"
                     />
                     <div className="text-2xl font-semibold">{heartRate}</div>
-                    <div className="text-xs text-black mt-2">BPM</div>
+                    <div className="text-xs text-black mt-2">BPM</div></> : <div className="flex flex-col items-end justify-end">
+                        <h1 className="font-semibold">Disconnected</h1>
+                        <h1 className="text-xs text-gray-600/70">Check Wrist Band</h1>
+                        </div>}
                 </div>
             </div>
             <div className="flex w-full h-16 rounded-md overflow-hidden relative">

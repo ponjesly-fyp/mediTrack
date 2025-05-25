@@ -43,7 +43,7 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
       setTemp(data.temperature)
     };
     const startPolling = () => {
-      fetchData(); // fetch immediately
+      fetchData();
       interval = setInterval(() => {
         if (document.visibilityState === 'visible') {
           fetchData();

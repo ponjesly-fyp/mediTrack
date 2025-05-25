@@ -28,7 +28,7 @@ const PatientForm = ({ params }: { params: Promise<{ id: string }> }) => {
                     <p className="text-gray-500 text-sm">Enter patient details for admission</p>
                 </div>
                 <div className="p-0">
-                    <PatientFormBoard onSubmit={handleSubmit} isSubmitting={isSubmitting} />
+                    <PatientFormBoard onSubmit={handleSubmit} isSubmitting={isSubmitting} roomNumber={roomNumber.id}/>
                 </div>
             </div>
         </div>

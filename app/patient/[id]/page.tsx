@@ -81,6 +81,16 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
         setLevel(data.distance);
         setBpm(data.bpm);
         setTemp(data.temperature);
+        if (data.buttonState == false) {
+          if (navigator.vibrate) {
+            navigator.vibrate(5000)
+          }
+          toast({
+            variant: "destructive",
+            title: `Emergency in Room ${id}`,
+            description: `Patient ${patientdata?.fullName} has pressed the emergency button.`,
+          })
+        }
       } catch (error) {
         console.error("Error fetching sensor data:", error);
       }
@@ -120,7 +130,7 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
 
 
   const [pump, setPump] = useState(false);
-
+  const [isRefilling, setIsRefilling] = useState(false)
   useEffect(() => {
     const fetchPumpState = async () => {
       const res = await fetch("https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/pumpState.json");
@@ -140,10 +150,7 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
       body: JSON.stringify(newState),
     });
     setPump(newState);
-    toast({
-      title: ivFlowPaused ? "IV Flow Resumed" : "IV Flow Paused",
-      description: `IV flow has been ${ivFlowPaused ? "resumed" : "paused"} for ${patient.name}`,
-    })
+    setIsRefilling(!isRefilling)
   };
 
   const patient = {
@@ -159,13 +166,6 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
     diagnosis: "Congestive Heart Failure",
     ivFlowRate: 120,
   }
-
-  const [isRefilling, setIsRefilling] = useState(false)
-  const handleRefill = () => {
-    setIsRefilling(true)
-    setTimeout(() => setIsRefilling(false), 3000)
-  }
-
   return (
     <div className="container mx-auto px-3 py-6 max-w-7xl font-recursive">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
@@ -204,6 +204,7 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
         <div className="space-y-6">
           {/* IV Fluid Status */}
           {loading ? <PatientDetailsCardSkeleton /> : <PatientDetailsCard
+            name={patientdata?.fullName ?? ""}
             weight={patientdata?.weight ?? 72}
             height={patientdata?.height ?? 170}
             bloodGroup={patientdata?.bloodGroup ?? "Unknown"}
@@ -228,9 +229,9 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
                 />
                 <div className="flex flex-row items-center justify-between w-full gap-2">
                   <Button
-                    onClick={handleRefill}
+                    onClick={toggleBuzzer}
                     className={`mt-6 w-full py-6 rounded-xl bg-gradient-to-r from-red-400 to-red-500
-                      } text-white font-semibold transition-all duration-500 hover:bg-opacity-90 ${isRefilling ? "cursor-not-allowed" : ""}`}
+                      } text-white font-semibold transition-all duration-500 hover:bg-opacity-90`}
                   >
                     {isRefilling ? (
                       <>

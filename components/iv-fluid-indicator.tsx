@@ -7,15 +7,14 @@ interface IVFluidIndicatorProps {
 }
 
 export function IVFluidIndicator({ fluidLevel, flowRate, isPaused }: IVFluidIndicatorProps) {
-  let fluidLevel1 = fluidLevel
-  if(fluidLevel>=100){
-    fluidLevel1 = 100
-  }
+  let fluidLevel1 = ((17 - fluidLevel) / (17 - 5)) * 100;
+  if (fluidLevel1 > 100) fluidLevel1 = 100;
+  if (fluidLevel1 < 0) fluidLevel1 = 0;
   const getFluidColor = () => {
-    if (fluidLevel1 <= 30) return "bg-gradient-to-l from-red-400 to-red-500"
-    if (fluidLevel1 <= 60) return "bg-gradient-to-l from-yellow-300 to-yellow-400"
-    return "bg-gradient-to-l from-green-400 to-green-500"
-  }
+    if (fluidLevel1 <= 30) return "bg-gradient-to-l from-red-400 to-red-500";
+    if (fluidLevel1 <= 60) return "bg-gradient-to-l from-yellow-300 to-yellow-400";
+    return "bg-gradient-to-l from-green-400 to-green-500";
+  };
   return (
     <div className="flex items-end gap-4 w-full">
       <div className="flex flex-col items-center">

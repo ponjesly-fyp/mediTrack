@@ -6,11 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Bed, FootprintsIcon as Walking } from "lucide-react"
 import { Footprints } from 'lucide-react';
 
-interface MovementTrackerProps {
-  patientId: number
-}
-
-export function MovementTracker({ patientId }: MovementTrackerProps) {
+export function MovementTracker() {
   // Sample movement data
   const movementData = {
     currentStatus: "in-bed", // "in-bed" or "out-of-bed"

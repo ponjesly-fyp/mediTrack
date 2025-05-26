@@ -5,11 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Activity, AlertTriangle, Bell, Droplet, Pill } from "lucide-react"
 
-interface AlertLogProps {
-  patientId: number
-}
 
-export function AlertLog({ patientId }: AlertLogProps) {
+export function AlertLog() {
   // Sample alert data
   const alerts = [
     {

@@ -24,72 +24,122 @@ import { AlertLog } from "@/components/alert-log"
 import { PatientDetailsCard } from "@/components/patient-details-card";
 import HeartbeatMonitor from "@/components/heartbeat-monitor";
 import TemperatureMonitor from "@/components/temperature-monitor";
+import PatientDetailsCardSkeleton from "@/components/patient-details-skeleton";
+type Patient = {
+  _id: string
+  fullName: string
+  age: number
+  gender: string
+  contactNumber: number
+  weight: number
+  height: number
+  allergies: string[]
+  bloodGroup: string
+  roomNumber: string
+  roomType: string
+}
 
 export default function PatientDashboard({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const patientInfo = patientData[String(id)]
   const { toast } = useToast()
+  const [patientdata, setPatientData] = useState<Patient>()
   const [ivFlowPaused, setIvFlowPaused] = useState(false)
   const [level, setLevel] = useState(0)
-  const [bpm,setBpm] = useState(72)
-  const [temp,setTemp] = useState(96)
+  const [bpm, setBpm] = useState(72)
+  const [temp, setTemp] = useState(96)
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    const fetchData = async () => {
-      const response = await fetch(`https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/.json`);
-      const data = await response.json();
-      setLevel(data.distance);
-      setBpm(data.bpm)
-      setTemp(data.temperature)
+
+    const fetchPatientData = async () => {
+      try {
+        const response = await fetch("/api/getPatient", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ roomNumber: id }),
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch patients");
+
+        const data = await response.json();
+        setPatientData(data.patient);
+      } catch (error) {
+        console.error("Error fetching patients:", error);
+      } finally {
+        setLoading(false);
+      }
     };
+
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/.json"
+        );
+        const data = await response.json();
+        setLevel(data.distance);
+        setBpm(data.bpm);
+        setTemp(data.temperature);
+      } catch (error) {
+        console.error("Error fetching sensor data:", error);
+      }
+    };
+
     const startPolling = () => {
       fetchData();
       interval = setInterval(() => {
-        if (document.visibilityState === 'visible') {
+        if (document.visibilityState === "visible") {
           fetchData();
         }
       }, 5000);
     };
+
     const stopPolling = () => {
       clearInterval(interval);
     };
+
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
+      if (document.visibilityState === "visible") {
         startPolling();
       } else {
         stopPolling();
       }
     };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    fetchPatientData();
     startPolling();
+
     return () => {
       stopPolling();
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, []);
 
-  const [buzzer, setBuzzer] = useState(false);
+
+  const [pump, setPump] = useState(false);
 
   useEffect(() => {
-    const fetchBuzzerState = async () => {
-      const res = await fetch("https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/buzzerState.json");
+    const fetchPumpState = async () => {
+      const res = await fetch("https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/pumpState.json");
       const data = await res.json();
-      setBuzzer(data);
+      setPump(data);
     };
-    fetchBuzzerState();
+    fetchPumpState();
   }, []);
 
   const toggleBuzzer = async () => {
-    const newState = !buzzer;
-    await fetch("https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/buzzerState.json", {
+    const newState = !pump;
+    await fetch("https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/pumpState.json", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(newState),
     });
-    setBuzzer(newState);
-    setIvFlowPaused(!ivFlowPaused)
+    setPump(newState);
     toast({
       title: ivFlowPaused ? "IV Flow Resumed" : "IV Flow Paused",
       description: `IV flow has been ${ivFlowPaused ? "resumed" : "paused"} for ${patient.name}`,
@@ -97,21 +147,17 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
   };
 
   const patient = {
-    id: Number.parseInt(id),
-    name: patientInfo.patientName,
-    age: patientInfo.age,
-    gender: patientInfo.gender,
-    roomNumber: patientInfo.bedId,
+    id: patientdata?.roomNumber,
+    name: patientdata?.fullName,
+    age: patientdata?.age,
+    gender: patientdata?.gender.toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' '),
+    roomNumber: patientdata?.roomNumber,
     admissionDate: "2023-05-15",
     diagnosis: "Congestive Heart Failure",
     ivFlowRate: 120,
-  }
-
-  const downloadReport = () => {
-    toast({
-      title: "Report Downloaded",
-      description: "Medical report has been downloaded successfully",
-    })
   }
 
   const [isRefilling, setIsRefilling] = useState(false)
@@ -130,7 +176,16 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
               <span className="sr-only">Back to Ward View</span>
             </Link>
           </Button>
-          <div>
+          {loading ? <div>
+            <div className="h-6 w-40 rounded bg-muted animate-pulse mb-2"></div>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="h-4 w-10 rounded bg-muted animate-pulse"></div>
+              <span>•</span>
+              <div className="h-4 w-12 rounded bg-muted animate-pulse"></div>
+              <span>•</span>
+              <div className="h-4 w-20 rounded bg-muted animate-pulse"></div>
+            </div>
+          </div> : <div>
             <h1 className="text-2xl font-bold font-recursive">{patient.name}</h1>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>{patient.age} yrs</span>
@@ -139,7 +194,7 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
               <span>•</span>
               <span>Room {patient.roomNumber}</span>
             </div>
-          </div>
+          </div>}
         </div>
       </div>
 
@@ -148,7 +203,12 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
         {/* Left Column - IV Fluid Status and Bed Exit Alerts */}
         <div className="space-y-6">
           {/* IV Fluid Status */}
-          <PatientDetailsCard id={id} />
+          {loading ? <PatientDetailsCardSkeleton /> : <PatientDetailsCard
+            weight={patientdata?.weight ?? 72}
+            height={patientdata?.height ?? 170}
+            bloodGroup={patientdata?.bloodGroup ?? "Unknown"}
+            allergies={patientdata?.allergies ?? []}
+          />}
           <Card>
             <CardHeader className="pb-2 px-3 md:px-4">
               <CardTitle className="text-lg flex justify-between items-center">
@@ -167,20 +227,6 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
                   isPaused={ivFlowPaused}
                 />
                 <div className="flex flex-row items-center justify-between w-full gap-2">
-                  <Button
-                    onClick={toggleBuzzer}
-                    className={`mt-6 py-6 rounded-full ${ivFlowPaused ? "bg-red-500 animate-pulse" : "bg-gradient-to-r from-red-400 to-red-500"} text-white font-semibold transition-all duration-500 hover:bg-opacity-90`}
-                  >
-                    {ivFlowPaused ? (
-                      <>
-                        <Play className="h-4 w-4" />
-                      </>
-                    ) : (
-                      <>
-                        <Pause className="h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
                   <Button
                     onClick={handleRefill}
                     className={`mt-6 w-full py-6 rounded-xl bg-gradient-to-r from-red-400 to-red-500
@@ -217,7 +263,7 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
                   <HeartbeatMonitor heartRate={bpm} />
                 </CardContent>
               </Card>
-              <TemperatureMonitor temperature={temp}/>
+              <TemperatureMonitor temperature={temp} />
               <VitalsChart type="glucose" timeframe="1h" />
             </CardContent>
           </Card>
@@ -228,12 +274,12 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {/* Movement Tracking */}
         <div>
-          <MovementTracker patientId={patient.id} />
+          <MovementTracker />
         </div>
 
         {/* Alert Log */}
         <div>
-          <AlertLog patientId={patient.id} />
+          <AlertLog />
         </div>
       </div>
     </div>

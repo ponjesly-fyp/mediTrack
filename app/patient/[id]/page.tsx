@@ -133,10 +133,26 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
   const [isRefilling, setIsRefilling] = useState(false)
   useEffect(() => {
     const fetchPumpState = async () => {
-      const res = await fetch("https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/pumpState.json");
-      const data = await res.json();
-      setPump(data);
+      try {
+        const res = await fetch("https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/pumpState.json");
+        let data = await res.json();
+        if (data === true) {
+          await fetch("https://hcsr04-bcae2-default-rtdb.asia-southeast1.firebasedatabase.app/pumpState.json", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(false),
+          });
+          data = false;
+        }
+
+        setPump(data);
+      } catch (error) {
+        console.error("Error fetching pump state:", error);
+      }
     };
+
     fetchPumpState();
   }, []);
 
@@ -234,10 +250,13 @@ export default function PatientDashboard({ params }: { params: Promise<{ id: str
                       } text-white font-semibold transition-all duration-500 hover:bg-opacity-90`}
                   >
                     {isRefilling ? (
-                      <>
-                        <LoaderCircle className="h-5 w-5 animate-spin" />
-                        Refilling
-                      </>
+                      <div className="flex flex-col items-center justify-center">
+                        <div className="flex flex-row gap-2">
+                          <LoaderCircle className="h-5 w-5 animate-spin" />
+                          <h1>Refilling</h1>
+                        </div>
+                        <p className="text-xs font-normal">click to pause</p>
+                      </div>
                     ) : (
                       <><Droplets className="h-5 w-5" /> Refill</>
                     )}
